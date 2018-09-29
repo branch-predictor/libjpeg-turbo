@@ -53,8 +53,10 @@ init_simd(void)
   /* Force different settings through environment variables */
   if (!GETENV_S(env, 2, "JSIMD_FORCEMMX") && !strcmp(env, "1"))
     simd_support &= JSIMD_MMX;
+#ifdef WITH_3DNOW
   if (!GETENV_S(env, 2, "JSIMD_FORCE3DNOW") && !strcmp(env, "1"))
     simd_support &= JSIMD_3DNOW | JSIMD_MMX;
+#endif
   if (!GETENV_S(env, 2, "JSIMD_FORCESSE") && !strcmp(env, "1"))
     simd_support &= JSIMD_SSE | JSIMD_MMX;
   if (!GETENV_S(env, 2, "JSIMD_FORCESSE2") && !strcmp(env, "1"))
@@ -808,8 +810,10 @@ jsimd_can_convsamp_float(void)
     return 1;
   if (simd_support & JSIMD_SSE)
     return 1;
+#ifdef WITH_3DNOW
   if (simd_support & JSIMD_3DNOW)
     return 1;
+#endif
 
   return 0;
 }
@@ -840,8 +844,10 @@ jsimd_convsamp_float(JSAMPARRAY sample_data, JDIMENSION start_col,
     jsimd_convsamp_float_sse2(sample_data, start_col, workspace);
   else if (simd_support & JSIMD_SSE)
     jsimd_convsamp_float_sse(sample_data, start_col, workspace);
+#ifdef WITH_3DNOW
   else
     jsimd_convsamp_float_3dnow(sample_data, start_col, workspace);
+#endif
 }
 
 GLOBAL(int)
@@ -897,8 +903,10 @@ jsimd_can_fdct_float(void)
 
   if ((simd_support & JSIMD_SSE) && IS_ALIGNED_SSE(jconst_fdct_float_sse))
     return 1;
+#ifdef WITH_3DNOW
   if (simd_support & JSIMD_3DNOW)
     return 1;
+#endif
 
   return 0;
 }
@@ -937,8 +945,10 @@ jsimd_fdct_float(FAST_FLOAT *data)
 
   if ((simd_support & JSIMD_SSE) && IS_ALIGNED_SSE(jconst_fdct_float_sse))
     jsimd_fdct_float_sse(data);
+#ifdef WITH_3DNOW
   else if (simd_support & JSIMD_3DNOW)
     jsimd_fdct_float_3dnow(data);
+#endif
 }
 
 GLOBAL(int)
@@ -981,8 +991,10 @@ jsimd_can_quantize_float(void)
     return 1;
   if (simd_support & JSIMD_SSE)
     return 1;
+#ifdef WITH_3DNOW
   if (simd_support & JSIMD_3DNOW)
     return 1;
+#endif
 
   return 0;
 }
@@ -1012,8 +1024,10 @@ jsimd_quantize_float(JCOEFPTR coef_block, FAST_FLOAT *divisors,
     jsimd_quantize_float_sse2(coef_block, divisors, workspace);
   else if (simd_support & JSIMD_SSE)
     jsimd_quantize_float_sse(coef_block, divisors, workspace);
+#ifdef WITH_3DNOW
   else
     jsimd_quantize_float_3dnow(coef_block, divisors, workspace);
+#endif
 }
 
 GLOBAL(int)
@@ -1172,9 +1186,10 @@ jsimd_can_idct_float(void)
     return 1;
   if ((simd_support & JSIMD_SSE) && IS_ALIGNED_SSE(jconst_idct_float_sse))
     return 1;
+#ifdef WITH_3DNOW
   if (simd_support & JSIMD_3DNOW)
     return 1;
-
+#endif
   return 0;
 }
 
@@ -1227,9 +1242,11 @@ jsimd_idct_float(j_decompress_ptr cinfo, jpeg_component_info *compptr,
   else if ((simd_support & JSIMD_SSE) && IS_ALIGNED_SSE(jconst_idct_float_sse))
     jsimd_idct_float_sse(compptr->dct_table, coef_block, output_buf,
                          output_col);
+#ifdef WITH_3DNOW
   else
     jsimd_idct_float_3dnow(compptr->dct_table, coef_block, output_buf,
                            output_col);
+#endif
 }
 
 GLOBAL(int)
