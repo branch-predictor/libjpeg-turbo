@@ -21,6 +21,9 @@
 /* Use accelerated SIMD routines when using 8-bit samples */
 #cmakedefine WITH_SIMD 1
 
+/* Disable GETENV */
+#cmakedefine NO_GETENV
+
 /* This version of libjpeg-turbo supports run-time selection of data precision,
  * so BITS_IN_JSAMPLE is no longer used to specify the data precision at build
  * time.  However, some downstream software expects the macro to be defined.

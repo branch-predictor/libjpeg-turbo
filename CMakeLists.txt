@@ -258,6 +258,8 @@ option(WITH_TURBOJPEG
   "Include the TurboJPEG API library and associated test programs" TRUE)
 boolean_number(WITH_TURBOJPEG)
 option(WITH_FUZZ "Build fuzz targets" FALSE)
+option(NO_GETENV "Enable GETENV to control memory usage and force code paths externally" TRUE)
+boolean_number(NO_GETENV)
 
 macro(report_option var desc)
   if(${var})
