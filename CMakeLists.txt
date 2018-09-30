@@ -262,6 +262,8 @@ option(NO_GETENV "Enable GETENV to control memory usage and force code paths ext
 boolean_number(NO_GETENV)
 option(WITH_3DNOW "Enable 3DNow supprt" FALSE)
 boolean_number(WITH_3DNOW)
+option(WITH_FULLTRACING "Enable tracing/debug messages" FALSE)
+boolean_number(WITH_FULLTRACING)
 
 macro(report_option var desc)
   if(${var})
