@@ -1,3 +1,4 @@
+#ifdef JPEGLIB_ENABLE_COMPRESS
 /*
  * Copyright (C) 2024, D. R. Commander.
  *
@@ -4131,4 +4132,5 @@ const unsigned char HIDDEN jpeg_nbits_table[65536] = {
 
 typedef int dummy_jpeg_nbits_table;
 
+#endif
 #endif

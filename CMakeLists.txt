@@ -264,6 +264,9 @@ option(WITH_3DNOW "Enable 3DNow supprt" FALSE)
 boolean_number(WITH_3DNOW)
 option(WITH_FULLTRACING "Enable tracing/debug messages" FALSE)
 boolean_number(WITH_FULLTRACING)
+option(JPEGLIB_ENABLE_COMPRESS "Enable compressor part" FALSE)
+boolean_number(JPEGLIB_ENABLE_COMPRESS)
+
 
 macro(report_option var desc)
   if(${var})
@@ -289,6 +292,7 @@ endif()
 
 report_option(ENABLE_SHARED "Shared libraries")
 report_option(ENABLE_STATIC "Static libraries")
+report_option(JPEGLIB_ENABLE_COMPRESS "Compression support")
 
 if(ENABLE_SHARED)
   set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_FULL_LIBDIR})
@@ -430,6 +434,7 @@ if(MSVC_LIKE)
       endforeach()
     endif()
   endif()
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W3 /wd4996 /Zp4")
   add_definitions(-D_CRT_NONSTDC_NO_WARNINGS)
 endif()
 
@@ -459,7 +464,7 @@ endif()
 set(EFFECTIVE_C_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UC}}")
 message(STATUS "Compiler flags = ${EFFECTIVE_C_FLAGS}")
 
-set(EFFECTIVE_LD_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${CMAKE_BUILD_TYPE_UC}}")
+set(EFFECTIVE_LD_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${CMAKE_BUILD_TYPE_UC}} ")
 message(STATUS "Linker flags = ${EFFECTIVE_LD_FLAGS}")
 
 include(CheckCSourceCompiles)
@@ -609,32 +614,67 @@ if(CMAKE_EXECUTABLE_SUFFIX_TMP)
 endif()
 message(STATUS "CMAKE_EXECUTABLE_SUFFIX = ${CMAKE_EXECUTABLE_SUFFIX}")
 
-set(JPEG16_SOURCES src/jcapistd.c src/jccolor.c src/jcdiffct.c src/jclossls.c
-  src/jcmainct.c src/jcprepct.c src/jcsample.c src/jdapistd.c src/jdcolor.c
-  src/jddiffct.c src/jdlossls.c src/jdmainct.c src/jdpostct.c src/jdsample.c
-  src/jutils.c)
-set(JPEG12_SOURCES ${JPEG16_SOURCES} src/jccoefct.c src/jcdctmgr.c
-  src/jdcoefct.c src/jddctmgr.c src/jdmerge.c src/jfdctfst.c src/jfdctint.c
-  src/jidctflt.c src/jidctfst.c src/jidctint.c src/jidctred.c src/jquant1.c
-  src/jquant2.c)
-set(JPEG_SOURCES ${JPEG12_SOURCES} src/jcapimin.c src/jchuff.c src/jcicc.c
-  src/jcinit.c src/jclhuff.c src/jcmarker.c src/jcmaster.c src/jcomapi.c
-  src/jcparam.c src/jcphuff.c src/jctrans.c src/jdapimin.c src/jdatadst.c
-  src/jdatasrc.c src/jdhuff.c src/jdicc.c src/jdinput.c src/jdlhuff.c
-  src/jdmarker.c src/jdmaster.c src/jdphuff.c src/jdtrans.c src/jerror.c
-  src/jfdctflt.c src/jmemmgr.c src/jmemnobs.c src/jpeg_nbits.c)
 
+if(JPEGLIB_ENABLE_COMPRESS)
+    set(JPEG16_SOURCES src/jcapistd.c src/jccolor.c src/jcdiffct.c src/jclossls.c
+      src/jcmainct.c src/jcprepct.c src/jcsample.c src/jdapistd.c src/jdcolor.c
+      src/jddiffct.c src/jdlossls.c src/jdmainct.c src/jdpostct.c src/jdsample.c
+      src/jutils.c)
+    set(JPEG12_SOURCES ${JPEG16_SOURCES} src/jccoefct.c src/jcdctmgr.c
+      src/jdcoefct.c src/jddctmgr.c src/jdmerge.c src/jfdctfst.c src/jfdctint.c
+      src/jidctflt.c src/jidctfst.c src/jidctint.c src/jidctred.c src/jquant1.c
+      src/jquant2.c)
+    set(JPEG_SOURCES ${JPEG12_SOURCES} src/jcapimin.c src/jchuff.c src/jcicc.c
+      src/jcinit.c src/jclhuff.c src/jcmarker.c src/jcmaster.c src/jcomapi.c
+      src/jcparam.c src/jcphuff.c src/jctrans.c src/jdapimin.c src/jdatadst.c
+      src/jdatasrc.c src/jdhuff.c src/jdicc.c src/jdinput.c src/jdlhuff.c
+      src/jdmarker.c src/jdmaster.c src/jdphuff.c src/jdtrans.c src/jerror.c
+      src/jfdctflt.c src/jmemmgr.c src/jmemnobs.c src/jpeg_nbits.c)
+else()
+    set(JPEG16_SOURCES src/jdapistd.c src/jdcolor.c src/jddiffct.c src/jdlossls
+      src/jdmainct.c src/jdpostct.c src/jdsample.c src/jutils.c)
+    set(JPEG12_SOURCES ${JPEG16_SOURCES} src/jdcoefct.c src/jddctmgr.c
+      src/jdmerge.c src/jfdctfst.c src/jfdctint.c src/jidctflt.c
+      src/jidctfst.c src/jidctint.c src/jidctred.c src/jquant1.c
+      src/jquant2.c)
+    set(JPEG_SOURCES ${JPEG12_SOURCES} src/jcomapi.c src/jdapimin.c
+      src/jdatadst.c src/jdatasrc.c src/jdhuff.c src/jdicc.c src/jdinput.c
+      src/jdlhuff.c src/jdmarker.c src/jdmaster.c src/jdphuff.c src/jdtrans.c
+      src/jerror.c  src/jfdctflt.c src/jmemmgr.c src/jmemnobs.c src/jpeg_nbits.c)
+endif()  
+  
 if(WITH_ARITH_ENC OR WITH_ARITH_DEC)
   set(JPEG_SOURCES ${JPEG_SOURCES} src/jaricom.c)
 endif()
 
-if(WITH_ARITH_ENC)
+if(WITH_ARITH_ENC AND JPEGLIB_ENABLE_COMPRESS)
   set(JPEG_SOURCES ${JPEG_SOURCES} src/jcarith.c)
 endif()
 
 if(WITH_ARITH_DEC)
   set(JPEG_SOURCES ${JPEG_SOURCES} src/jdarith.c)
 endif()
+
+if(MSVC)
+  if(JPEGLIB_ENABLE_COMPRESS)
+    configure_file("win/jpeg62-rw.def" "win/jpeg62.def" COPYONLY)
+  else()
+    configure_file("win/jpeg62-ro.def" "win/jpeg62.def" COPYONLY)
+  endif()
+endif()
+
+# Compile a separate version of these source files with 12-bit and 16-bit data
+# precision.
+add_library(jpeg12 OBJECT jcapistd.c jccoefct.c jccolor.c jcdctmgr.c jcdiffct.c
+  jclossls.c jcmainct.c jcprepct.c jcsample.c jdapistd.c jdcoefct.c jdcolor.c
+  jddctmgr.c jddiffct.c jdlossls.c jdmainct.c jdmerge.c jdpostct.c jdsample.c
+  jfdctfst.c jfdctint.c jidctflt.c jidctfst.c jidctint.c jidctred.c jquant1.c
+  jquant2.c jutils.c)
+set_property(TARGET jpeg12 PROPERTY COMPILE_FLAGS "-DBITS_IN_JSAMPLE=12")
+add_library(jpeg16 OBJECT jcapistd.c jccolor.c jcdiffct.c jclossls.c jcmainct.c
+  jcprepct.c jcsample.c jdapistd.c jdcolor.c jddiffct.c jdlossls.c jdmainct.c
+  jdpostct.c jdsample.c jquant1.c jquant2.c jutils.c)
+set_property(TARGET jpeg16 PROPERTY COMPILE_FLAGS "-DBITS_IN_JSAMPLE=16")
 
 if(WITH_SIMD)
   add_subdirectory(simd)
