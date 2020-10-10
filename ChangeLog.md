@@ -1,3 +1,63 @@
+2.0.6
+=====
+
+### Significant changes relative to 2.0.5:
+
+1. Fixed "using JNI after critical get" errors that occurred on Android
+platforms when using any of the YUV encoding/compression/decompression/decoding
+methods in the TurboJPEG Java API.
+
+2. Fixed or worked around multiple issues with `jpeg_skip_scanlines()`:
+
+     - Fixed segfaults or "Corrupt JPEG data: premature end of data segment"
+errors in `jpeg_skip_scanlines()` that occurred when decompressing 4:2:2 or
+4:2:0 JPEG images using merged (non-fancy) upsampling/color conversion (that
+is, when setting `cinfo.do_fancy_upsampling` to `FALSE`.)  2.0.0[6] was a
+similar fix, but it did not cover all cases.
+     - `jpeg_skip_scanlines()` now throws an error if two-pass color
+quantization is enabled.  Two-pass color quantization never worked properly
+with `jpeg_skip_scanlines()`, and the issues could not readily be fixed.
+     - Fixed an issue whereby `jpeg_skip_scanlines()` always returned 0 when
+skipping past the end of an image.
+
+3. The ARM 64-bit (ARMv8) NEON SIMD extensions can now be built using MinGW
+toolchains targetting ARM64 (AArch64) Windows binaries.
+
+4. Fixed unexpected visual artifacts that occurred when using
+`jpeg_crop_scanline()` and interblock smoothing while decompressing only the
+DC scan of a progressive JPEG image.
+
+
+2.0.5
+=====
+
+### Significant changes relative to 2.0.4:
+
+1. Worked around issues in the MIPS DSPr2 SIMD extensions that caused failures
+in the libjpeg-turbo regression tests.  Specifically, the
+`jsimd_h2v1_downsample_dspr2()` and `jsimd_h2v2_downsample_dspr2()` functions
+in the MIPS DSPr2 SIMD extensions are now disabled until/unless they can be
+fixed, and other functions that are incompatible with big endian MIPS CPUs are
+disabled when building libjpeg-turbo for such CPUs.
+
+2. Fixed an oversight in the `TJCompressor.compress(int)` method in the
+TurboJPEG Java API that caused an error ("java.lang.IllegalStateException: No
+source image is associated with this instance") when attempting to use that
+method to compress a YUV image.
+
+3. Fixed an issue (CVE-2020-13790) in the PPM reader that caused a buffer
+overrun in cjpeg, TJBench, or the `tjLoadImage()` function if one of the values
+in a binary PPM/PGM input file exceeded the maximum value defined in the file's
+header and that maximum value was less than 255.  libjpeg-turbo 1.5.0 already
+included a similar fix for binary PPM/PGM files with maximum values greater
+than 255.
+
+4. The TurboJPEG API library's global error handler, which is used in functions
+such as `tjBufSize()` and `tjLoadImage()` that do not require a TurboJPEG
+instance handle, is now thread-safe on platforms that support thread-local
+storage.
+
+
 2.0.4
 =====
 
@@ -379,9 +439,9 @@ end of a single-scan (non-progressive) image, subsequent calls to
 `jpeg_consume_input()` would return `JPEG_SUSPENDED` rather than
 `JPEG_REACHED_EOI`.
 
-9. `jpeg_crop_scanlines()` now works correctly when decompressing grayscale
-JPEG images that were compressed with a sampling factor other than 1 (for
-instance, with `cjpeg -grayscale -sample 2x2`).
+9. `jpeg_crop_scanline()` now works correctly when decompressing grayscale JPEG
+images that were compressed with a sampling factor other than 1 (for instance,
+with `cjpeg -grayscale -sample 2x2`).
 
 
 1.5.2
@@ -405,7 +465,7 @@ on PowerPC-based AmigaOS 4 and OpenBSD systems.
 5. Fixed build and runtime errors on Windows that occurred when building
 libjpeg-turbo with libjpeg v7 API/ABI emulation and the in-memory
 source/destination managers.  Due to an oversight, the `jpeg_skip_scanlines()`
-and `jpeg_crop_scanlines()` functions were not being included in jpeg7.dll when
+and `jpeg_crop_scanline()` functions were not being included in jpeg7.dll when
 libjpeg-turbo was built with `-DWITH_JPEG7=1` and `-DWITH_MEMSRCDST=1`.
 
 6. Fixed "Bogus virtual array access" error that occurred when using the
@@ -562,10 +622,10 @@ application was linked against.
 
 3. Fixed a couple of issues in the PPM reader that would cause buffer overruns
 in cjpeg if one of the values in a binary PPM/PGM input file exceeded the
-maximum value defined in the file's header.  libjpeg-turbo 1.4.2 already
-included a similar fix for ASCII PPM/PGM files.  Note that these issues were
-not security bugs, since they were confined to the cjpeg program and did not
-affect any of the libjpeg-turbo libraries.
+maximum value defined in the file's header and that maximum value was greater
+than 255.  libjpeg-turbo 1.4.2 already included a similar fix for ASCII PPM/PGM
+files.  Note that these issues were not security bugs, since they were confined
+to the cjpeg program and did not affect any of the libjpeg-turbo libraries.
 
 4. Fixed an issue whereby attempting to decompress a JPEG file with a corrupt
 header using the `tjDecompressToYUV2()` function would cause the function to
