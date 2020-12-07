@@ -267,7 +267,6 @@ boolean_number(WITH_FULLTRACING)
 option(JPEGLIB_ENABLE_COMPRESS "Enable compressor part" FALSE)
 boolean_number(JPEGLIB_ENABLE_COMPRESS)
 
-
 macro(report_option var desc)
   if(${var})
     message(STATUS "${desc} enabled (${var} = ${${var}})")

@@ -65,13 +65,16 @@ if(MAPFLAG)
     LINK_FLAGS "${MAPFLAG}${CMAKE_CURRENT_BINARY_DIR}/../libjpeg.map")
 endif()
 if(MSVC_LIKE)
+  # Make it run from swap if running from CD/DVD or network
+  set_target_properties(jpeg PROPERTIES LINK_FLAGS "/SWAPRUN:CD /SWAPRUN:NET")
+
   set_target_properties(jpeg PROPERTIES
     RUNTIME_OUTPUT_NAME jpeg${SO_MAJOR_VERSION})
   # The jsimd_*.c file is built to use libcmt or libcmtd, so this prevents a
   # linker warning.
   if(MSVC)
     set_target_properties(jpeg PROPERTIES LINK_FLAGS
-      "/NODEFAULTLIB:LIBCMT /NODEFAULTLIB:LIBCMTD")
+      "/NODEFAULTLIB:LIBCMT /NODEFAULTLIB:LIBCMTD /SWAPRUN:CD /SWAPRUN:NET")
   else()
     set_target_properties(jpeg PROPERTIES LINK_FLAGS
       "-Wl,-nodefaultlib:libcmt -Wl,-nodefaultlib:libcmtd")
