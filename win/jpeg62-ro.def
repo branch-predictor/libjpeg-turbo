@@ -63,3 +63,5 @@ EXPORTS
   jpeg_skip_scanlines @ 102 ;
   jpeg_crop_scanline @ 103 ;
   jpeg_read_icc_profile @ 104 ;
+  jpeg12_read_scanlines @ 125 ;
+  jpeg16_read_scanlines @ 131 ;

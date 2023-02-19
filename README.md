@@ -13,15 +13,16 @@ How to use
 
 tl;dr - clone this repo's "master" branch and proceed like with regular libjpeg-turbo.
 
-Current changelog
------------------
+Current changelog (versus original libjpeg-turbo)
+-------------------------------------------
 
-- Ability to disable "getenv" code that allows forcing particular SIMD codepath.
-- Ability to disable 3DNow extensions support
+- Ability to disable "getenv" code that allows forcing particular SIMD codepath (NO_GETENV)
+- Ability to disable 3DNow extensions support (WITH_3DNOW)
 - Built-in protection against LJT­01­003 (https://cure53.de/pentest-report_libjpeg-turbo.pdf)
-- Ability to disable tracing/debug messages (no calling emit_message for trace/debug level messages)
-- Ability to disable encoder (compressor) code, saving storage space for projects that don't require JPEG compression.
+- Ability to disable tracing/debug messages (no calling emit_message for trace/debug level messages) (WITH_FULLTRACING)
+- Ability to disable encoder (compressor) code, saving storage space for projects that don't require JPEG compression (JPEGLIB_ENABLE_COMPRESS)
 - Undefined DCT_FLOAT_SUPPORTED by default, which shaves a few KB off resulting .dll - JDCT_FLOAT is useless with libjpeg-turbo's AVX2/SSE code.
+- Added ability to disable several rarely used during decompression functions (JPEGLIB_THIN)
 
 Planned changes
 ---------------
@@ -29,11 +30,6 @@ Planned changes
 - Automatic conversion from CMYK to RGB
 
   Right now I'm doing this manually "offsite" (outside of library code), meaning wasted time for reprocessing the pixel data. 
-  
-- Static (self-contained) Windows build
-
-  Currently the MSVC runtime library installation is required to run applications utilizing this library.
-  
   
 Changes that I'd like to research
 ----------------------------------  
