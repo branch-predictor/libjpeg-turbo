@@ -42,7 +42,11 @@
  * jerror.h with a suitable definition for macro JMESSAGE.
  */
 
+#ifdef WITH_FULLTRACING
 #define JMESSAGE(code, string)  string,
+#else
+#define JMESSAGE(code, string)  "",
+#endif
 
 static const char * const jpeg_std_message_table[] = {
 #include "jerror.h"
