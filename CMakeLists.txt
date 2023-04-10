@@ -617,6 +617,7 @@ endif()
 message(STATUS "CMAKE_EXECUTABLE_SUFFIX = ${CMAKE_EXECUTABLE_SUFFIX}")
 
 
+
 if(JPEGLIB_ENABLE_COMPRESS)
     set(JPEG16_SOURCES src/jcapistd.c src/jccolor.c src/jcdiffct.c src/jclossls.c
       src/jcmainct.c src/jcprepct.c src/jcsample.c src/jdapistd.c src/jdcolor.c
@@ -633,7 +634,7 @@ if(JPEGLIB_ENABLE_COMPRESS)
       src/jdmarker.c src/jdmaster.c src/jdphuff.c src/jdtrans.c src/jerror.c
       src/jfdctflt.c src/jmemmgr.c src/jmemnobs.c src/jpeg_nbits.c)
 else()
-    set(JPEG16_SOURCES src/jdapistd.c src/jdcolor.c src/jddiffct.c src/jdlossls
+    set(JPEG16_SOURCES src/jdapistd.c src/jdcolor.c src/jddiffct.c src/jdlossls.c
       src/jdmainct.c src/jdpostct.c src/jdsample.c src/jutils.c)
     set(JPEG12_SOURCES ${JPEG16_SOURCES} src/jdcoefct.c src/jddctmgr.c
       src/jdmerge.c src/jfdctfst.c src/jfdctint.c src/jidctflt.c
@@ -645,6 +646,7 @@ else()
       src/jerror.c  src/jfdctflt.c src/jmemmgr.c src/jmemnobs.c src/jpeg_nbits.c)
 endif()  
   
+
 if(WITH_ARITH_ENC OR WITH_ARITH_DEC)
   set(JPEG_SOURCES ${JPEG_SOURCES} src/jaricom.c)
 endif()
@@ -666,19 +668,6 @@ if(MSVC)
     configure_file("win/jpeg62-ro.def" "win/jpeg62.def" COPYONLY)
   endif()
 endif()
-
-# Compile a separate version of these source files with 12-bit and 16-bit data
-# precision.
-add_library(jpeg12 OBJECT jcapistd.c jccoefct.c jccolor.c jcdctmgr.c jcdiffct.c
-  jclossls.c jcmainct.c jcprepct.c jcsample.c jdapistd.c jdcoefct.c jdcolor.c
-  jddctmgr.c jddiffct.c jdlossls.c jdmainct.c jdmerge.c jdpostct.c jdsample.c
-  jfdctfst.c jfdctint.c jidctflt.c jidctfst.c jidctint.c jidctred.c jquant1.c
-  jquant2.c jutils.c)
-set_property(TARGET jpeg12 PROPERTY COMPILE_FLAGS "-DBITS_IN_JSAMPLE=12")
-add_library(jpeg16 OBJECT jcapistd.c jccolor.c jcdiffct.c jclossls.c jcmainct.c
-  jcprepct.c jcsample.c jdapistd.c jdcolor.c jddiffct.c jdlossls.c jdmainct.c
-  jdpostct.c jdsample.c jquant1.c jquant2.c jutils.c)
-set_property(TARGET jpeg16 PROPERTY COMPILE_FLAGS "-DBITS_IN_JSAMPLE=16")
 
 if(WITH_SIMD)
   add_subdirectory(simd)
